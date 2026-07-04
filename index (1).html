@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinishLine | Professional Photography & Retouching Marketplace</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ─── DESIGN TOKENS ─── */
+        :root {
+            --burgundy:      #6B1A2A;
+            --burgundy-dark: #4A0F1C;
+            --burgundy-mid:  #8B2439;
+            --burgundy-glow: rgba(107,26,42,0.35);
+            --beige:         #F2E8D5;
+            --beige-mid:     #DDD0BB;
+            --beige-dim:     #C8B89A;
+            --cream:         #FBF7F0;
+            --ink:           #1A0C10;
+            --ink-mid:       #2E1419;
+            --ink-soft:      rgba(26,12,16,0.55);
+            --gold-line:     rgba(242,232,213,0.15);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--ink);
+            color: var(--beige);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--ink); }
+        ::-webkit-scrollbar-thumb { background: var(--burgundy); border-radius: 2px; }
+
+        /* ─── GRAIN OVERLAY ─── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        /* ─── ANIMATE ON SCROLL ─── */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.45s; }
+        .delay-5 { transition-delay: 0.6s; }
+
+        /* ─── HERO BACKGROUND ─── */
+        .hero-section {
+            background:
+                linear-gradient(160deg, rgba(74,15,28,0.92) 0%, rgba(26,12,16,0.75) 45%, rgba(26,12,16,0.88) 100%),
+                url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1800&q=80') center/cover no-repeat;
+        }
+
+        /* ─── DIVIDER LINE ─── */
+        .divider {
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, var(--burgundy), var(--beige-mid));
+        }
+
+        /* ─── CARD HOVER ─── */
+        .pro-card {
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s ease;
+        }
+        .pro-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 60px rgba(107,26,42,0.3);
+            border-color: var(--burgundy-mid) !important;
+        }
+        .pro-card img { transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+        .pro-card:hover img { transform: scale(1.07); }
+
+        /* ─── CAT CARD ─── */
+        .cat-card { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
+        .cat-card:hover { transform: translateY(-6px); }
+        .cat-card .cat-line {
+            width: 32px; height: 2px;
+            background: var(--burgundy-mid);
+            transition: width 0.35s ease;
+        }
+        .cat-card:hover .cat-line { width: 56px; }
+        .cat-card img { transition: transform 0.5s ease, filter 0.5s ease; filter: brightness(0.5); }
+        .cat-card:hover img { transform: scale(1.06); filter: brightness(0.35); }
+
+        /* ─── STEP NUMBER ─── */
+        .step-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 5rem; font-weight: 700;
+            color: rgba(107,26,42,0.18);
+            line-height: 1;
+            min-width: 3.5rem;
+            transition: color 0.3s;
+        }
+        .step-row:hover .step-num { color: rgba(107,26,42,0.4); }
+
+        /* ─── NAVBAR BLUR ─── */
+        .navbar {
+            backdrop-filter: blur(16px) saturate(1.4);
+            -webkit-backdrop-filter: blur(16px) saturate(1.4);
+            background: rgba(26,12,16,0.85);
+            border-bottom: 1px solid var(--gold-line);
+            transition: background 0.3s;
+        }
+
+        /* ─── SEARCH BAR ─── */
+        .search-wrap {
+            background: rgba(242,232,213,0.07);
+            border: 1px solid rgba(242,232,213,0.18);
+            backdrop-filter: blur(12px);
+        }
+        .search-wrap input::placeholder { color: rgba(242,232,213,0.4); }
+        .search-wrap input:focus { outline: none; }
+
+        /* ─── PILL BADGE ─── */
+        .pill {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+            border: 1px solid rgba(107,26,42,0.5);
+            color: var(--burgundy-mid);
+            background: rgba(107,26,42,0.12);
+        }
+
+        /* ─── STAT COUNTER ─── */
+        .stat-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem; font-weight: 700;
+            color: var(--beige);
+            line-height: 1;
+        }
+
+        /* ─── TESTI CARD ─── */
+        .testi-card {
+            background: rgba(242,232,213,0.04);
+            border: 1px solid rgba(242,232,213,0.08);
+            transition: border-color 0.3s, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .testi-card:hover {
+            border-color: rgba(107,26,42,0.4);
+            transform: translateY(-4px);
+        }
+
+        /* ─── CTA SECTION ─── */
+        .cta-section {
+            background: linear-gradient(135deg, #3A0D18 0%, #1A0C10 50%, #0F0609 100%);
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--burgundy-mid), transparent);
+        }
+
+        /* ─── LOCATION PINS ─── */
+        .pin {
+            position: absolute; width: 12px; height: 12px;
+            background: var(--burgundy-mid); border-radius: 50%;
+            border: 2px solid var(--ink);
+            box-shadow: 0 0 0 4px rgba(107,26,42,0.3), 0 0 12px rgba(107,26,42,0.4);
+            animation: pulse-pin 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse-pin {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(107,26,42,0.3), 0 0 12px rgba(107,26,42,0.4); }
+            50%       { box-shadow: 0 0 0 8px rgba(107,26,42,0.15), 0 0 24px rgba(107,26,42,0.6); }
+        }
+
+        /* ─── HERO HEADLINE REVEAL ─── */
+        @keyframes reveal-up {
+            from { opacity: 0; transform: translateY(60px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes reveal-fade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .hero-h1 { animation: reveal-up 1.1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
+        .hero-p  { animation: reveal-up 1.1s cubic-bezier(0.16,1,0.3,1) 0.45s both; }
+        .hero-search { animation: reveal-up 1.1s cubic-bezier(0.16,1,0.3,1) 0.65s both; }
+        .hero-stats  { animation: reveal-fade 1.2s ease 1s both; }
+        .hero-eyebrow { animation: reveal-fade 1s ease 0.1s both; }
+
+        /* ─── FOOTER ─── */
+        footer {
+            background: rgba(10,4,6,1);
+            border-top: 1px solid var(--gold-line);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav class="navbar fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-16 py-4">
+
+    <!-- Logo -->
+    <a href="index.html" style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:700; letter-spacing:1px; color:var(--beige);">
+        Finish<span style="color:var(--burgundy-mid);">Line</span>
+    </a>
+
+    <!-- Nav Links -->
+    <div class="flex gap-10">
+        <a href="#photographers" style="font-size:13px; color:rgba(242,232,213,0.55); letter-spacing:0.5px; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.55)'">Photographers</a>
+        <a href="#how-it-works" style="font-size:13px; color:rgba(242,232,213,0.55); letter-spacing:0.5px; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.55)'">How it Works</a>
+        <a href="#categories" style="font-size:13px; color:rgba(242,232,213,0.55); letter-spacing:0.5px; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.55)'">Categories</a>
+        <a href="#retouchers" style="font-size:13px; color:rgba(242,232,213,0.55); letter-spacing:0.5px; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.55)'">Retouchers</a>
+    </div>
+
+    <!-- Auth: Guest (shown when not logged in) -->
+    <div id="auth-guest" class="flex gap-3 items-center">
+        <a href="login.html" style="font-size:13px; padding:8px 20px; border:1px solid rgba(242,232,213,0.2); color:var(--beige); text-decoration:none; border-radius:2px; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='var(--burgundy-mid)'; this.style.color='var(--burgundy-mid)'" onmouseout="this.style.borderColor='rgba(242,232,213,0.2)'; this.style.color='var(--beige)'">Log in</a>
+        <a href="signup.html" style="font-size:13px; padding:8px 20px; background:var(--burgundy); color:var(--beige); text-decoration:none; border-radius:2px; font-weight:500; transition:background 0.2s;" onmouseover="this.style.background='var(--burgundy-mid)'" onmouseout="this.style.background='var(--burgundy)'">Join as Pro</a>
+    </div>
+
+    <!-- Auth: User (shown when logged in, hidden by default) -->
+    <div id="auth-user" class="hidden flex gap-4 items-center">
+        <span style="font-size:13px; color:var(--beige-dim);">Welcome, <strong id="user-display-name" style="color:var(--beige);"></strong></span>
+        <button id="logout-btn" style="font-size:12px; padding:7px 18px; border:1px solid rgba(107,26,42,0.5); background:rgba(107,26,42,0.15); color:var(--burgundy-mid); border-radius:2px; cursor:pointer; transition:all 0.2s; letter-spacing:0.5px;" onmouseover="this.style.background='var(--burgundy)'; this.style.color='var(--beige)'" onmouseout="this.style.background='rgba(107,26,42,0.15)'; this.style.color='var(--burgundy-mid)'">Log Out</button>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero-section min-h-screen flex flex-col items-center justify-center text-center relative px-6 pt-20">
+
+    <div style="position:relative; z-index:2; max-width:860px; transform: translateY(-30px);">
+
+        <!-- Eyebrow -->
+        <div class="hero-eyebrow flex items-center justify-center gap-3 mb-8">
+            <span style="width:44px; height:1px; background:var(--beige-mid); opacity:1;"></span>
+            <span class="pill font-semibold text-xs bg-[#F5F5DC] px-3 py-1 rounded-full" style="font-family:'Cormorant Garamond', serif; opacity: 1 !important;">The Creative Marketplace</span>
+            <span style="width:44px; height:1px; background:var(--beige-mid); opacity:1;"></span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="hero-h1" style="font-family:'Cormorant Garamond',serif; font-size:clamp(52px,8vw,100px); font-weight:700; line-height:1.02; color:var(--beige); margin-bottom:24px; letter-spacing:-1px;">
+            Where <em style="color:var(--burgundy-mid); font-style:italic;">Vision</em><br>Meets Craft
+        </h1>
+
+        <!-- Subtext -->
+        <p class="hero-p" style="font-size:17px; color:rgba(242,232,213,0.6); line-height:1.8; margin-bottom:40px; font-weight:300; max-width:560px; margin-left:auto; margin-right:auto;">
+            Connect with world-class photographers and retouchers.<br>Find the perfect creative professional near you.
+        </p>
+
+        <!-- Search Bar -->
+         <!-- move div up -->
+        <div class="hero-search search-wrap flex overflow-hidden mb-12 mx-auto" style="max-width:620px; border-radius:3px;">
+            <input type="text" placeholder="Search by skill, style or name..." style="flex:1; background:transparent; border:none; color:var(--beige); padding:16px 20px; font-size:14px; font-family:'Jost',sans-serif;">
+            <select style="background:rgba(242,232,213,0.06); border:none; border-left:1px solid rgba(242,232,213,0.12); color:rgba(242,232,213,0.55); padding:0 16px; font-size:13px; font-family:'Jost',sans-serif; outline:none; cursor:pointer;">
+                <option style="background:#1A0C10;">All Services</option>
+                <option style="background:#1A0C10;">Photography</option>
+                <option style="background:#1A0C10;">Retouching</option>
+            </select>
+            <button style="background:var(--burgundy); border:none; color:var(--beige); padding:0 28px; font-size:13px; font-weight:500; font-family:'Jost',sans-serif; cursor:pointer; letter-spacing:0.5px; transition:background 0.2s;" onmouseover="this.style.background='var(--burgundy-mid)'" onmouseout="this.style.background='var(--burgundy)'">Search</button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="hero-stats absolute bottom-12 left-1/2 flex items-center gap-14" style="transform:translateX(-50%); z-index:2;">
+        <div class="text-center">
+            <span class="stat-num">2,400+</span>
+            <span style="display:block; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:rgba(242,232,213,0.4); margin-top:6px;">Creatives</span>
+        </div>
+        <div style="width:1px; height:40px; background:rgba(242,232,213,0.1);"></div>
+        <div class="text-center">
+            <span class="stat-num">18K</span>
+            <span style="display:block; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:rgba(242,232,213,0.4); margin-top:6px;">Projects Done</span>
+        </div>
+        <div style="width:1px; height:40px; background:rgba(242,232,213,0.1);"></div>
+        <div class="text-center">
+            <span class="stat-num">96%</span>
+            <span style="display:block; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:rgba(242,232,213,0.4); margin-top:6px;">Satisfaction</span>
+        </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div style="position:absolute; bottom:28px; right:48px; z-index:2; display:flex; flex-direction:column; align-items:center; gap:6px; opacity:0.35;">
+        <span style="font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--beige); writing-mode:vertical-rl;">Scroll</span>
+        <div style="width:1px; height:40px; background:var(--beige-mid);"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════ -->
+<section id="how-it-works" class="min-h-screen flex items-center py-28 px-16" style="background:var(--ink-mid);">
+    <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:96px; align-items:center; width:100%;">
+
+        <!-- Left -->
+        <div class="animate-on-scroll">
+            <div class="divider mb-6"></div>
+            <span style="font-size:14px; letter-spacing:4px; font-weight:bold; text-transform:uppercase; color:var(--burgundy-mid); display:block; margin-bottom:20px;">How it works</span>
+            <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(36px,4vw,58px); font-weight:700; color:var(--beige); line-height:1.1; margin-bottom:24px;">
+                Three steps to your perfect shot
+            </h2>
+            <p style="font-size:20px; color:rgba(242,232,213,0.5); line-height:1.9; font-weight:300; max-width:380px;">
+                Whether you need a photographer on location or a retoucher to perfect your images, we make it effortless.
+            </p>
+        </div>
+
+        <!-- Right: Steps -->
+        <div class="flex flex-col">
+
+            <div class="step-row animate-on-scroll delay-1 flex gap-7 items-start py-10" style="border-bottom:1px solid rgba(212, 194, 157, 0.07);">
+                <div class="step-num" style="color: rgba(245, 245, 221, 1);">01</div>
+                <div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:10px;">Search & Discover</h3>
+                    <p style="font-size:16px; color:rgba(242,232,213,0.5); line-height:1.8;">Browse portfolios filtered by specialty, location, style, and budget. Find exactly who you need.</p>
+                </div>
+            </div>
+
+            <div class="step-row animate-on-scroll delay-2 flex gap-7 items-start py-10" style="border-bottom:1px solid rgba(242,232,213,0.07);">
+                <div class="step-num" style="color:rgba(245, 245, 221, 1);">02</div>
+                <div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:10px;">Request & Discuss</h3>
+                    <p style="font-size:16px; color:rgba(242,232,213,0.5); line-height:1.8;">Send a project brief directly to your chosen creative. Chat, negotiate, and align on expectations.</p>
+                </div>
+            </div>
+
+            <div class="step-row animate-on-scroll delay-3 flex gap-7 items-start py-10">
+                <div class="step-num" style="color:rgba(245, 245, 221, 1);">03</div>
+                <div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:10px;">Receive & Review</h3>
+                    <p style="font-size:16px; color:rgba(242,232,213,0.5); line-height:1.8;">Get your deliverables securely. Request revisions and release payment only when you're satisfied.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FEATURED PROFESSIONALS
+══════════════════════════════════════ -->
+<section id="photographers" class="min-h-screen flex flex-col justify-center py-28 px-16" style="background:var(--ink);">
+    <div style="max-width:1200px; margin:0 auto; width:100%;">
+
+        <!-- Header -->
+        <div class="flex justify-between items-end mb-16 animate-on-scroll">
+            <div>
+                <span style="font-size:14px; font-weight: bold; letter-spacing:4px; text-transform:uppercase; color:var(--burgundy-mid); display:block; margin-bottom:14px;">Top talent</span>
+                <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(32px,4vw,52px); font-weight:700; color:var(--beige);">Featured Professionals</h2>
+            </div>
+            <!-- Filter tabs -->
+            <div class="flex gap-2">
+                <button style="padding:8px 20px; font-size:13px; background:var(--burgundy); color:var(--beige); border:1px solid var(--burgundy); border-radius:2px; cursor:pointer; font-family:'Jost',sans-serif;">All</button>
+                <button style="padding:8px 20px; font-size:13px; background:transparent; color:rgba(242,232,213,0.5); border:1px solid rgba(242,232,213,0.12); border-radius:2px; cursor:pointer; font-family:'Jost',sans-serif; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--burgundy-mid)'; this.style.color='var(--burgundy-mid)'" onmouseout="this.style.borderColor='rgba(242,232,213,0.12)'; this.style.color='rgba(242,232,213,0.5)'">Photographers</button>
+                <button style="padding:8px 20px; font-size:13px; background:transparent; color:rgba(242,232,213,0.5); border:1px solid rgba(242,232,213,0.12); border-radius:2px; cursor:pointer; font-family:'Jost',sans-serif; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--burgundy-mid)'; this.style.color='var(--burgundy-mid)'" onmouseout="this.style.borderColor='rgba(242,232,213,0.12)'; this.style.color='rgba(242,232,213,0.5)'">Retouchers</button>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+
+            <!-- Card 1 -->
+            <div class="pro-card animate-on-scroll delay-1" style="background:#1C0E13; border:1px solid rgba(242,232,213,0.06); border-radius:3px; overflow:hidden;">
+                <div style="position:relative; aspect-ratio:4/3; overflow:hidden;">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80" alt="Chisom Adeyemi" style="width:100%; height:100%; object-fit:cover;">
+                    <span style="position:absolute; top:14px; left:14px; background:var(--burgundy); color:var(--beige); font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; padding:4px 10px; border-radius:2px;">Photographer</span>
+                    <span style="position:absolute; bottom:14px; right:14px; background:rgba(26,12,16,0.8); backdrop-filter:blur(6px); color:rgba(242,232,213,0.8); font-size:11px; padding:4px 10px; border-radius:2px;">📍 Abuja, NG</span>
+                </div>
+                <div style="padding:20px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80" alt="Chisom" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid var(--burgundy-mid);">
+                        <div>
+                            <div style="font-size:14px; font-weight:500; color:var(--beige);">Chisom Adeyemi</div>
+                            <div style="font-size:12px; color:rgba(242,232,213,0.45); margin-top:2px;">Fashion & Editorial</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:16px;">
+                        <span style="color:var(--burgundy-mid); font-size:12px;">★★★★★</span>
+                        <span style="font-size:13px; font-weight:500; color:var(--beige);">4.9</span>
+                        <span style="font-size:12px; color:rgba(242,232,213,0.35);">(142 reviews)</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(242,232,213,0.06); padding-top:14px;">
+                        <span style="font-size:12px; color:rgba(242,232,213,0.45);">From <strong style="color:var(--beige); font-size:15px;">₦80,000</strong></span>
+                        <a href="#" style="font-size:12px; color:var(--burgundy-mid); border:1px solid rgba(107,26,42,0.4); padding:6px 14px; border-radius:2px; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='var(--burgundy)'; this.style.color='var(--beige)'" onmouseout="this.style.background='transparent'; this.style.color='var(--burgundy-mid)'">View Portfolio</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="pro-card animate-on-scroll delay-2" style="background:#1C0E13; border:1px solid rgba(242,232,213,0.06); border-radius:3px; overflow:hidden;">
+                <div style="position:relative; aspect-ratio:4/3; overflow:hidden;">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="James Wilson" style="width:100%; height:100%; object-fit:cover;">
+                    <span style="position:absolute; top:14px; left:14px; background:rgba(26,12,16,0.85); color:var(--beige); font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; padding:4px 10px; border-radius:2px; border:1px solid rgba(242,232,213,0.12);">Retoucher</span>
+                    <span style="position:absolute; bottom:14px; right:14px; background:rgba(26,12,16,0.8); backdrop-filter:blur(6px); color:rgba(242,232,213,0.8); font-size:11px; padding:4px 10px; border-radius:2px;">📍 Lagos, NG</span>
+                </div>
+                <div style="padding:20px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80" alt="James" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid var(--burgundy-mid);">
+                        <div>
+                            <div style="font-size:14px; font-weight:500; color:var(--beige);">James Wilson</div>
+                            <div style="font-size:12px; color:rgba(242,232,213,0.45); margin-top:2px;">Product & E-commerce</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:16px;">
+                        <span style="color:var(--burgundy-mid); font-size:12px;">★★★★★</span>
+                        <span style="font-size:13px; font-weight:500; color:var(--beige);">4.8</span>
+                        <span style="font-size:12px; color:rgba(242,232,213,0.35);">(89 reviews)</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(242,232,213,0.06); padding-top:14px;">
+                        <span style="font-size:12px; color:rgba(242,232,213,0.45);">From <strong style="color:var(--beige); font-size:15px;">$30</strong>/image</span>
+                        <a href="#" style="font-size:12px; color:var(--burgundy-mid); border:1px solid rgba(107,26,42,0.4); padding:6px 14px; border-radius:2px; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='var(--burgundy)'; this.style.color='var(--beige)'" onmouseout="this.style.background='transparent'; this.style.color='var(--burgundy-mid)'">View Portfolio</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="pro-card animate-on-scroll delay-3" style="background:#1C0E13; border:1px solid rgba(242,232,213,0.06); border-radius:3px; overflow:hidden;">
+                <div style="position:relative; aspect-ratio:4/3; overflow:hidden;">
+                    <img src="https://images.unsplash.com/photo-1520390138845-fd2d229dd553?w=600&q=80" alt="Ngozi Eze" style="width:100%; height:100%; object-fit:cover;">
+                    <span style="position:absolute; top:14px; left:14px; background:var(--burgundy); color:var(--beige); font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; padding:4px 10px; border-radius:2px;">Photographer</span>
+                    <span style="position:absolute; bottom:14px; right:14px; background:rgba(26,12,16,0.8); backdrop-filter:blur(6px); color:rgba(242,232,213,0.8); font-size:11px; padding:4px 10px; border-radius:2px;">📍 Port Harcourt, NG</span>
+                </div>
+                <div style="padding:20px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80" alt="Ngozi" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid var(--burgundy-mid);">
+                        <div>
+                            <div style="font-size:14px; font-weight:500; color:var(--beige);">Ngozi Eze</div>
+                            <div style="font-size:12px; color:rgba(242,232,213,0.45); margin-top:2px;">Portrait & Lifestyle</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:16px;">
+                        <span style="color:var(--burgundy-mid); font-size:12px;">★★★★★</span>
+                        <span style="font-size:13px; font-weight:500; color:var(--beige);">4.7</span>
+                        <span style="font-size:12px; color:rgba(242,232,213,0.35);">(211 reviews)</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(242,232,213,0.06); padding-top:14px;">
+                        <span style="font-size:12px; color:rgba(242,232,213,0.45);">From <strong style="color:var(--beige); font-size:15px;">₦120,000</strong></span>
+                        <a href="#" style="font-size:12px; color:var(--burgundy-mid); border:1px solid rgba(107,26,42,0.4); padding:6px 14px; border-radius:2px; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='var(--burgundy)'; this.style.color='var(--beige)'" onmouseout="this.style.background='transparent'; this.style.color='var(--burgundy-mid)'">View Portfolio</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CATEGORIES
+══════════════════════════════════════ -->
+<section id="categories" class="min-h-screen flex flex-col justify-center py-28 px-16" style="background:var(--ink-mid);">
+    <div style="max-width:1200px; margin:0 auto; width:100%;">
+
+        <div class="text-center mb-16 animate-on-scroll">
+            <span style="font-size:14px; font-weight: bold; letter-spacing:4px; text-transform:uppercase; color:var(--burgundy-mid); display:block; margin-bottom:14px;">Browse by category</span>
+            <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(32px,4vw,52px); font-weight:700; color:var(--beige); margin-bottom:16px;">What are you looking for?</h2>
+            <p style="font-size:20px; color:rgba(242,232,213,0.45); font-weight:300; max-width:440px; margin:0 auto; line-height:1.8;">From weddings to commercial shoots, find the right creative for every project.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+
+            <div class="cat-card animate-on-scroll delay-1" style="position:relative; aspect-ratio:3/4; border-radius:3px; overflow:hidden; cursor:pointer;">
+                <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80" alt="Wedding" style="width:100%; height:100%; object-fit:cover;">
+                <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(26,12,16,0.9) 0%, transparent 55%); display:flex; flex-direction:column; justify-content:flex-end; padding:24px;">
+                    <div class="cat-line" style="margin-bottom:12px;"></div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:4px;">Wedding</h3>
+                    <p style="font-size:12px; color:rgba(242,232,213,0.45);">340 professionals</p>
+                </div>
+            </div>
+
+            <div class="cat-card animate-on-scroll delay-2" style="position:relative; aspect-ratio:3/4; border-radius:3px; overflow:hidden; cursor:pointer;">
+                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80" alt="Fashion" style="width:100%; height:100%; object-fit:cover;">
+                <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(26,12,16,0.9) 0%, transparent 55%); display:flex; flex-direction:column; justify-content:flex-end; padding:24px;">
+                    <div class="cat-line" style="margin-bottom:12px;"></div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:4px;">Fashion</h3>
+                    <p style="font-size:12px; color:rgba(242,232,213,0.45);">512 professionals</p>
+                </div>
+            </div>
+
+            <div class="cat-card animate-on-scroll delay-3" style="position:relative; aspect-ratio:3/4; border-radius:3px; overflow:hidden; cursor:pointer;">
+                <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80" alt="Portrait" style="width:100%; height:100%; object-fit:cover;">
+                <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(26,12,16,0.9) 0%, transparent 55%); display:flex; flex-direction:column; justify-content:flex-end; padding:24px;">
+                    <div class="cat-line" style="margin-bottom:12px;"></div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:4px;">Portrait</h3>
+                    <p style="font-size:12px; color:rgba(242,232,213,0.45);">628 professionals</p>
+                </div>
+            </div>
+
+            <div class="cat-card animate-on-scroll delay-4" style="position:relative; aspect-ratio:3/4; border-radius:3px; overflow:hidden; cursor:pointer;">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Product" style="width:100%; height:100%; object-fit:cover;">
+                <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(26,12,16,0.9) 0%, transparent 55%); display:flex; flex-direction:column; justify-content:flex-end; padding:24px;">
+                    <div class="cat-line" style="margin-bottom:12px;"></div>
+                    <h3 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--beige); margin-bottom:4px;">Product</h3>
+                    <p style="font-size:12px; color:rgba(242,232,213,0.45);">290 professionals</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     LOCATION
+══════════════════════════════════════ -->
+<section id="location" class="min-h-screen flex items-center py-28 px-16" style="background:var(--ink);">
+    <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; width:100%;">
+
+        <!-- Map Visual -->
+        <div class="animate-on-scroll" style="position:relative; aspect-ratio:1; border-radius:3px; overflow:hidden; border:1px solid rgba(242,232,213,0.06);">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80" alt="Map" style="width:100%; height:100%; object-fit:cover; opacity:0.3; filter:grayscale(1) contrast(1.3);">
+            <div style="position:absolute; inset:0; background:rgba(107,26,42,0.08);"></div>
+            <!-- Pins -->
+            <div style="position:absolute; inset:0;">
+                <div class="pin" style="top:32%; left:48%;"></div>
+                <div class="pin" style="top:55%; left:35%; animation-delay:0.4s;"></div>
+                <div class="pin" style="top:44%; left:62%; animation-delay:0.8s;"></div>
+                <div class="pin" style="top:68%; left:52%; animation-delay:1.2s;"></div>
+                <div class="pin" style="top:28%; left:70%; animation-delay:0.2s;"></div>
+            </div>
+        </div>
+
+        <!-- Text -->
+        <div class="animate-on-scroll delay-2">
+            <div class="divider mb-6"></div>
+            <span style="font-size:14px; font-weight: bold; letter-spacing:4px; text-transform:uppercase; color:var(--burgundy-mid); display:block; margin-bottom:20px;">Location-based search</span>
+            <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(32px,4vw,52px); font-weight:700; color:var(--beige); margin-bottom:16px; line-height:1.1;">Find talent near you</h2>
+            <p style="font-size:20px; color:rgba(242,232,213,0.5); line-height:1.9; font-weight:300; margin-bottom:44px;">Whether you're in Lagos, Abuja, or anywhere else, discover skilled creatives in your city or within your travel radius.</p>
+
+            <div style="display:flex; flex-direction:column; gap:28px;">
+
+                <div style="display:flex; gap:20px; align-items:flex-start;">
+                    <div style="width:44px; height:44px; background:rgba(107,26,42,0.15); border:1px solid rgba(107,26,42,0.3); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">📍</div>
+                    <div>
+                        <h4 style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--beige); margin-bottom:6px;">Search by city or distance</h4>
+                        <p style="font-size:16px; color:rgba(242,232,213,0.45); line-height:1.8;">Filter professionals within 10km, 50km, or across the country.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:20px; align-items:flex-start;">
+                    <div style="width:44px; height:44px; background:rgba(107,26,42,0.15); border:1px solid rgba(107,26,42,0.3); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">✈️</div>
+                    <div>
+                        <h4 style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--beige); margin-bottom:6px;">Travel-ready creatives</h4>
+                        <p style="font-size:16px; color:rgba(242,232,213,0.45); line-height:1.8;">Many pros are willing to travel for on-location shoots.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:20px; align-items:flex-start;">
+                    <div style="width:44px; height:44px; background:rgba(107,26,42,0.15); border:1px solid rgba(107,26,42,0.3); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">🌍</div>
+                    <div>
+                        <h4 style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--beige); margin-bottom:6px;">Remote retouching, anywhere</h4>
+                        <p style="font-size:16px; color:rgba(242,232,213,0.45); line-height:1.8;">Retouchers work remotely — hire the best regardless of geography.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════ -->
+<section id="testimonials" class="min-h-screen flex flex-col justify-center py-28 px-16" style="background:var(--ink-mid);">
+    <div style="max-width:1200px; margin:0 auto; width:100%;">
+
+        <div class="text-center mb-16 animate-on-scroll">
+            <span style="font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--burgundy-mid); display:block; margin-bottom:14px;">Client stories</span>
+            <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(32px,4vw,52px); font-weight:700; color:var(--beige); margin-bottom:14px;">What our clients say</h2>
+            <p style="font-size:15px; color:rgba(242,232,213,0.45); font-weight:300;">Real results from real projects.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+
+            <div class="testi-card animate-on-scroll delay-1" style="padding:36px; border-radius:3px;">
+                <p style="font-family:'Cormorant Garamond',serif; font-size:60px; color:var(--burgundy-mid); opacity:0.3; line-height:0.5; margin-bottom:24px;">"</p>
+                <p style="font-size:14px; color:rgba(242,232,213,0.65); line-height:1.9; font-weight:300; margin-bottom:28px;">Found an incredible portrait photographer in Abuja within an hour. The quality of work was beyond what I expected for the price. Will definitely use FinishLine again.</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80" alt="Emeka" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid rgba(107,26,42,0.4);">
+                    <div>
+                        <p style="font-size:14px; font-weight:500; color:var(--beige);">Emeka Okafor</p>
+                        <p style="font-size:12px; color:rgba(242,232,213,0.4); margin-top:2px;">Brand Manager · Lagos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card animate-on-scroll delay-2" style="padding:36px; border-radius:3px;">
+                <p style="font-family:'Cormorant Garamond',serif; font-size:60px; color:var(--burgundy-mid); opacity:0.3; line-height:0.5; margin-bottom:24px;">"</p>
+                <p style="font-size:14px; color:rgba(242,232,213,0.65); line-height:1.9; font-weight:300; margin-bottom:28px;">The retoucher I hired turned around 200 product images in 48 hours. Flawless results. The platform made communication super easy from brief to delivery.</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=80" alt="Sade" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid rgba(107,26,42,0.4);">
+                    <div>
+                        <p style="font-size:14px; font-weight:500; color:var(--beige);">Sade Adunola</p>
+                        <p style="font-size:12px; color:rgba(242,232,213,0.4); margin-top:2px;">E-commerce Founder</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card animate-on-scroll delay-3" style="padding:36px; border-radius:3px;">
+                <p style="font-family:'Cormorant Garamond',serif; font-size:60px; color:var(--burgundy-mid); opacity:0.3; line-height:0.5; margin-bottom:24px;">"</p>
+                <p style="font-size:14px; color:rgba(242,232,213,0.65); line-height:1.9; font-weight:300; margin-bottom:28px;">As a photographer myself, being on FinishLine has brought me consistent, quality clients. The platform handles the admin so I can focus on my craft.</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80" alt="Tunde" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid rgba(107,26,42,0.4);">
+                    <div>
+                        <p style="font-size:14px; font-weight:500; color:var(--beige);">Tunde Bakare</p>
+                        <p style="font-size:12px; color:rgba(242,232,213,0.4); margin-top:2px;">Fashion Photographer</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════ -->
+<section class="cta-section relative px-16 py-28 animate-on-scroll">
+    <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;">
+
+        <div>
+            <span class="pill" style="margin-bottom:24px; display:inline-block;">Join the platform</span>
+            <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(36px,4vw,56px); font-weight:700; color:var(--beige); margin-bottom:20px; line-height:1.1;">Ready to bring your vision to life?</h2>
+            <p style="font-size:20px; color:rgba(242,232,213,0.5); line-height:1.9; font-weight:300; margin-bottom:40px;">Whether you're a client looking for talent or a creative ready to showcase your work — FinishLine is your platform.</p>
+            <div style="display:flex; gap:16px;">
+                <a href="signup.html" style="padding:14px 36px; background:var(--burgundy); color:var(--beige); text-decoration:none; font-size:14px; font-weight:500; border-radius:2px; letter-spacing:0.5px; transition:background 0.2s;" onmouseover="this.style.background='var(--burgundy-mid)'" onmouseout="this.style.background='var(--burgundy)'">Hire a Creative</a>
+                <a href="signup.html" style="padding:14px 36px; border:1px solid rgba(242,232,213,0.2); color:var(--beige); text-decoration:none; font-size:14px; border-radius:2px; letter-spacing:0.5px; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--burgundy-mid)'; this.style.color='var(--burgundy-mid)'" onmouseout="this.style.borderColor='rgba(242,232,213,0.2)'; this.style.color='var(--beige)'">Join as a Pro</a>
+            </div>
+        </div>
+
+        <!-- Decorative right side -->
+        <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+            <div style="width:280px; height:280px; border-radius:50%; border:1px solid rgba(107,26,42,0.3); display:flex; align-items:center; justify-content:center; position:relative;">
+                <div style="width:200px; height:200px; border-radius:50%; border:1px solid rgba(107,26,42,0.5); display:flex; align-items:center; justify-content:center;">
+                    <div style="width:120px; height:120px; border-radius:50%; background:rgba(107,26,42,0.25); display:flex; align-items:center; justify-content:center;">
+                        <span style="font-family:'Cormorant Garamond',serif; font-size:48px; color:var(--burgundy-mid);">FL</span>
+                    </div>
+                </div>
+                <!-- Orbiting stats -->
+                <div style="position:absolute; top:-10px; right:20px; background:rgba(26,12,16,0.9); border:1px solid rgba(107,26,42,0.3); padding:10px 16px; border-radius:3px; text-align:center;">
+                    <div style="font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--beige); font-weight:700;">2.4K+</div>
+                    <div style="font-size:10px; color:rgba(242,232,213,0.4); letter-spacing:1px; text-transform:uppercase;">Pros</div>
+                </div>
+                <div style="position:absolute; bottom:-10px; left:10px; background:rgba(26,12,16,0.9); border:1px solid rgba(107,26,42,0.3); padding:10px 16px; border-radius:3px; text-align:center;">
+                    <div style="font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--beige); font-weight:700;">18K</div>
+                    <div style="font-size:10px; color:rgba(242,232,213,0.4); letter-spacing:1px; text-transform:uppercase;">Projects</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer style="padding:64px 64px 40px;">
+    <div style="max-width:1200px; margin:0 auto;">
+
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:64px; margin-bottom:56px;">
+
+            <div>
+                <div style="font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700; color:var(--beige); margin-bottom:16px;">
+                    Finish<span style="color:var(--burgundy-mid);">Line</span>
+                </div>
+                <p style="font-size:13px; color:rgba(242,232,213,0.4); line-height:1.9; max-width:280px;">The marketplace for photography and retouching talent. Connecting creatives with clients across Africa and beyond.</p>
+            </div>
+
+            <div>
+                <h4 style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--burgundy-mid); margin-bottom:20px;">Explore</h4>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+                    <li><a href="#photographers" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Photographers</a></li>
+                    <li><a href="#retouchers" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Retouchers</a></li>
+                    <li><a href="#categories" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Categories</a></li>
+                    <li><a href="#location" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Near Me</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--burgundy-mid); margin-bottom:20px;">Company</h4>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">About</a></li>
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Blog</a></li>
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Careers</a></li>
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Press</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--burgundy-mid); margin-bottom:20px;">Support</h4>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Help Centre</a></li>
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Privacy Policy</a></li>
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Terms of Use</a></li>
+                    <li><a href="#" style="font-size:13px; color:rgba(242,232,213,0.4); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--beige)'" onmouseout="this.style.color='rgba(242,232,213,0.4)'">Contact Us</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div style="border-top:1px solid rgba(242,232,213,0.07); padding-top:28px; display:flex; justify-content:space-between; align-items:center;">
+            <p style="font-size:12px; color:rgba(242,232,213,0.2);">&copy; 2026 FinishLine Marketplace. All rights reserved.</p>
+            <p style="font-size:12px; color:rgba(242,232,213,0.2);">Made with care for creatives.</p>
+        </div>
+
+    </div>
+</footer>
+
+<script type="module" src="index.js"></script>
+</body>
+</html>

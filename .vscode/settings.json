@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "**/.git": false,
+        "**/.svn": false,
+        "**/.hg": false,
+        "**/CVS": false,
+        "**/.DS_Store": false,
+        "**/node_modules": false
+    },
+    "explorer.excludeGitIgnore": false,
+    "explorer.fileNesting.enabled": false
+}
